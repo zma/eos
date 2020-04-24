@@ -236,13 +236,11 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
       
       const uint32_t expected_lib = 0;
       const block_trace_v1 expected_trace{
-         {
-            bsp1->id,
-            1,
-            bsp1->prev(),
-            chain::block_timestamp_type(1),
-            "bp.one"_n
-         },
+         bsp1->id,
+         1,
+         bsp1->prev(),
+         chain::block_timestamp_type(1),
+         "bp.one"_n,
          bsp1->block->transaction_mroot,
          bsp1->block->action_mroot,
          bsp1->block->schedule_version,
@@ -274,7 +272,7 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
                fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{bsp1->block->transactions[0].status},
                bsp1->block->transactions[0].cpu_usage_us,
                bsp1->block->transactions[0].net_usage_words,
-               *ptrx1.get_signatures(),
+               ptrx1.get_signatures(),
                make_trx_header(ptrx1.get_transaction())
             }
          }
@@ -318,13 +316,11 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
       const uint32_t expected_lib = 0;
 
       const block_trace_v1 expected_trace{
-         {
-            bsp1->id,
-            1,
-            bsp1->prev(),
-            chain::block_timestamp_type(1),
-            "bp.one"_n
-         },
+         bsp1->id,
+         1,
+         bsp1->prev(),
+         chain::block_timestamp_type(1),
+         "bp.one"_n,
          bsp1->block->transaction_mroot,
          bsp1->block->action_mroot,
          bsp1->block->schedule_version,
@@ -344,7 +340,7 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
                fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{bsp1->block->transactions[0].status},
                bsp1->block->transactions[0].cpu_usage_us,
                bsp1->block->transactions[0].net_usage_words,
-               *ptrx1.get_signatures(),
+               ptrx1.get_signatures(),
                make_trx_header(ptrx1.get_transaction())
             }
             ,
@@ -353,15 +349,15 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
                   ptrx2.id(),
                   {
                      1,
-                     "bob"_n, "eosio.token"_n, "transfer"_n,
-                     {{ "bob"_n, "active"_n }},
-                     make_transfer_data( "bob"_n, "alice"_n, "0.0001 SYS"_t, "Memo!" )
+                     "fred"_n, "eosio.token"_n, "transfer"_n,
+                     {{ "fred"_n, "active"_n }},
+                     make_transfer_data( "fred"_n, "bob"_n, "0.0001 SYS"_t, "Memo!" )
                   }
                },
                fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{bsp1->block->transactions[1].status},
                bsp1->block->transactions[1].cpu_usage_us,
                bsp1->block->transactions[1].net_usage_words,
-               *ptrx2.get_signatures(),
+               ptrx2.get_signatures(),
                make_trx_header(ptrx2.get_transaction())
             }
             ,
@@ -370,15 +366,15 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
                   ptrx3.id(),
                   {
                      2,
-                     "fred"_n, "eosio.token"_n, "transfer"_n,
-                     {{ "fred"_n, "active"_n }},
-                     make_transfer_data( "fred"_n, "bob"_n, "0.0001 SYS"_t, "Memo!" )
+                     "bob"_n, "eosio.token"_n, "transfer"_n,
+                     {{"bob"_n, "active"_n}},
+                     make_transfer_data("bob"_n, "alice"_n, "0.0001 SYS"_t, "Memo!")
                   }
                },
                fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{bsp1->block->transactions[2].status},
                bsp1->block->transactions[2].cpu_usage_us,
                bsp1->block->transactions[2].net_usage_words,
-               *ptrx3.get_signatures(),
+               ptrx3.get_signatures(),
                make_trx_header(ptrx3.get_transaction())
             }
          }
@@ -414,13 +410,11 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
 
       const uint32_t expected_lib = 0;
       const block_trace_v1 expected_trace {
-         {
-            bsp1->id,
-            1,
-            bsp1->prev(),
-            chain::block_timestamp_type(1),
-            "bp.one"_n
-         },
+         bsp1->id,
+         1,
+         bsp1->prev(),
+         chain::block_timestamp_type(1),
+         "bp.one"_n,
          bsp1->block->transaction_mroot,
          bsp1->block->action_mroot,
          bsp1->block->schedule_version,
@@ -439,7 +433,7 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
                },
                fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{bsp1->block->transactions[0].status},
                bsp1->block->transactions[0].cpu_usage_us,
-               bsp1->block->transactions[0].net_usage_words,
+               bsp1->block->transactions[1].net_usage_words,
                transfer_trx.get_signatures(),
                make_trx_header(transfer_trx.get_transaction())
             }

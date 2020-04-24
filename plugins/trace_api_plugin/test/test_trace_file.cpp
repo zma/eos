@@ -15,73 +15,64 @@ namespace {
    struct test_fixture {
 
       const block_trace_v1 bt {
-         {
-            "0000000000000000000000000000000000000000000000000000000000000001"_h,
-            1,
-            "0000000000000000000000000000000000000000000000000000000000000003"_h,
-            chain::block_timestamp_type(1),
-            "bp.one"_n,
-            {}
-         },
+         "0000000000000000000000000000000000000000000000000000000000000001"_h,
+         1,
+         "0000000000000000000000000000000000000000000000000000000000000003"_h,
+         chain::block_timestamp_type(1),
+         "bp.one"_n,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          0,
          {
             {
+               "0000000000000000000000000000000000000000000000000000000000000001"_h,
                {
-                  "0000000000000000000000000000000000000000000000000000000000000001"_h,
                   {
-                     {
-                        0,
-                        "eosio.token"_n, "eosio.token"_n, "transfer"_n,
-                        {{ "alice"_n, "active"_n }},
-                        make_transfer_data( "alice"_n, "bob"_n, "0.0001 SYS"_t, "Memo!" )
-                     },
-                     {
-                        1,
-                        "alice"_n, "eosio.token"_n, "transfer"_n,
-                        {{ "alice"_n, "active"_n }},
-                        make_transfer_data( "alice"_n, "bob"_n, "0.0001 SYS"_t, "Memo!" )
-                     },
-                     {
-                        2,
-                        "bob"_n, "eosio.token"_n, "transfer"_n,
-                        {{ "alice"_n, "active"_n }},
-                        make_transfer_data( "alice"_n, "bob"_n, "0.0001 SYS"_t, "Memo!" )
-                     }
+                     0,
+                     "eosio.token"_n, "eosio.token"_n, "transfer"_n,
+                     {{ "alice"_n, "active"_n }},
+                     make_transfer_data( "alice"_n, "bob"_n, "0.0001 SYS"_t, "Memo!" )
+                  },
+                  {
+                     1,
+                     "alice"_n, "eosio.token"_n, "transfer"_n,
+                     {{ "alice"_n, "active"_n }},
+                     make_transfer_data( "alice"_n, "bob"_n, "0.0001 SYS"_t, "Memo!" )
+                  },
+                  {
+                     2,
+                     "bob"_n, "eosio.token"_n, "transfer"_n,
+                     {{ "alice"_n, "active"_n }},
+                     make_transfer_data( "alice"_n, "bob"_n, "0.0001 SYS"_t, "Memo!" )
                   }
                },
                fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{chain::transaction_receipt_header::status_enum::executed},
                10,
                5,
                std::vector<chain::signature_type>{chain::signature_type()},
-               chain::transaction_header{chain::time_point_sec(), 1, 0, 100, 50, 0}
+               chain::transaction_header{chain::time_point(), 1, 0, 100, 50, 0}
             }
          }
       };
       
       const block_trace_v1 bt2 {
-         {
-            "0000000000000000000000000000000000000000000000000000000000000002"_h,
-            5,
-            "0000000000000000000000000000000000000000000000000000000000000005"_h,
-            chain::block_timestamp_type(2),
-            "bp.two"_n
-         },
+         "0000000000000000000000000000000000000000000000000000000000000002"_h,
+         5,
+         "0000000000000000000000000000000000000000000000000000000000000005"_h,
+         chain::block_timestamp_type(2),
+         "bp.two"_n,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          0,
          {
             {
-               {
-                  "f000000000000000000000000000000000000000000000000000000000000004"_h,
-                  {}
-               },
+               "f000000000000000000000000000000000000000000000000000000000000004"_h,
+               {},
                fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{chain::transaction_receipt_header::status_enum::executed},
                10,
                5,
                std::vector<chain::signature_type>{chain::signature_type()},
-               chain::transaction_header{chain::time_point_sec(), 1, 0, 100, 50, 0}
+               chain::transaction_header{chain::time_point(), 1, 0, 100, 50, 0}
             }
          }
       };

@@ -75,13 +75,11 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
    BOOST_FIXTURE_TEST_CASE(basic_empty_block_response, response_test_fixture)
    {
       auto block_trace = block_trace_v1 {
-         {
-            "b000000000000000000000000000000000000000000000000000000000000001"_h,
-            1,
-            "0000000000000000000000000000000000000000000000000000000000000000"_h,
-            chain::block_timestamp_type(0),
-            "bp.one"_n
-         },
+         "b000000000000000000000000000000000000000000000000000000000000001"_h,
+         1,
+         "0000000000000000000000000000000000000000000000000000000000000000"_h,
+         chain::block_timestamp_type(0),
+         "bp.one"_n,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          0,
@@ -95,12 +93,15 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
          ("status", "pending")
          ("timestamp", "2000-01-01T00:00:00.000Z")
          ("producer", "bp.one")
+         ("transaction_mroot", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("action_mroot", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("schedule_version", 0)
          ("transactions", fc::variants() )
       ;
 
       mock_get_block = [&block_trace]( uint32_t height, const yield_function& ) -> get_block_t {
          BOOST_TEST(height == 1);
-         return std::make_tuple(block_trace, false);
+         return std::make_tuple(data_log_entry{block_trace}, false);
       };
 
       fc::variant actual_response = get_block_trace( 1 );
@@ -111,13 +112,11 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
    BOOST_FIXTURE_TEST_CASE(basic_block_response, response_test_fixture)
    {
       auto block_trace = block_trace_v1 {
-         {
-            "b000000000000000000000000000000000000000000000000000000000000001"_h,
-            1,
-            "0000000000000000000000000000000000000000000000000000000000000000"_h,
-            chain::block_timestamp_type(0),
-            "bp.one"_n
-         },
+         "b000000000000000000000000000000000000000000000000000000000000001"_h,
+         1,
+         "0000000000000000000000000000000000000000000000000000000000000000"_h,
+         chain::block_timestamp_type(0),
+         "bp.one"_n,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          0,
@@ -133,7 +132,12 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
                         { 0x00, 0x01, 0x02, 0x03 }
                      }
                   }
-               }
+               },
+               fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{chain::transaction_receipt_header::status_enum::executed},
+               10,
+               5,
+               std::vector<chain::signature_type>{ chain::signature_type() },
+               { chain::time_point(), 1, 0, 100, 50, 0 }
             }
          }
       };
@@ -145,11 +149,15 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
          ("status", "pending")
          ("timestamp", "2000-01-01T00:00:00.000Z")
          ("producer", "bp.one")
+         ("transaction_mroot", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("action_mroot", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("schedule_version", 0)
          ("transactions", fc::variants({
             fc::mutable_variant_object()
                ("id", "0000000000000000000000000000000000000000000000000000000000000001")
                ("actions", fc::variants({
                   fc::mutable_variant_object()
+                     ("global_sequence", 0)
                      ("receiver", "receiver")
                      ("account", "contract")
                      ("action", "action")
@@ -162,12 +170,24 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
                      ("params", fc::mutable_variant_object()
                            ("hex", "00010203"))
                }))
+               ("status", "executed")
+               ("cpu_usage_us", 10)
+               ("net_usage_words", 5)
+               ("signatures", fc::variants({"SIG_K1_111111111111111111111111111111111111111111111111111111111111111116uk5ne"}))
+               ("transaction_header", fc::mutable_variant_object()
+                  ("expiration", "1970-01-01T00:00:00")
+                  ("ref_block_num", 1)
+                  ("ref_block_prefix", 0)
+                  ("max_net_usage_words", 100)
+                  ("max_cpu_usage_ms", 50)
+                  ("delay_sec", 0)
+               )
          }))
       ;
 
       mock_get_block = [&block_trace]( uint32_t height, const yield_function& ) -> get_block_t {
          BOOST_TEST(height == 1);
-         return std::make_tuple(block_trace, false);
+         return std::make_tuple(data_log_entry(block_trace), false);
       };
 
       fc::variant actual_response = get_block_trace( 1 );
@@ -178,13 +198,11 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
    BOOST_FIXTURE_TEST_CASE(basic_block_response_no_params, response_test_fixture)
    {
       auto block_trace = block_trace_v1 {
-         {
-            "b000000000000000000000000000000000000000000000000000000000000001"_h,
-            1,
-            "0000000000000000000000000000000000000000000000000000000000000000"_h,
-            chain::block_timestamp_type(0),
-            "bp.one"_n
-         },
+         "b000000000000000000000000000000000000000000000000000000000000001"_h,
+         1,
+         "0000000000000000000000000000000000000000000000000000000000000000"_h,
+         chain::block_timestamp_type(0),
+         "bp.one"_n,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          0,
@@ -200,7 +218,12 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
                         { 0x00, 0x01, 0x02, 0x03 }
                      }
                   }
-               }
+               },
+               fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{chain::transaction_receipt_header::status_enum::executed},
+               10,
+               5,
+               std::vector<chain::signature_type>{ chain::signature_type() },
+               { chain::time_point(), 1, 0, 100, 50, 0 }
             }
          }
       };
@@ -212,11 +235,15 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
          ("status", "pending")
          ("timestamp", "2000-01-01T00:00:00.000Z")
          ("producer", "bp.one")
+         ("transaction_mroot", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("action_mroot", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("schedule_version", 0)
          ("transactions", fc::variants({
             fc::mutable_variant_object()
                ("id", "0000000000000000000000000000000000000000000000000000000000000001")
                ("actions", fc::variants({
                   fc::mutable_variant_object()
+                     ("global_sequence", 0)
                      ("receiver", "receiver")
                      ("account", "contract")
                      ("action", "action")
@@ -227,12 +254,24 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
                      }))
                      ("data", "00010203")
                }))
+               ("status", "executed")
+               ("cpu_usage_us", 10)
+               ("net_usage_words", 5)
+               ("signatures", fc::variants({"SIG_K1_111111111111111111111111111111111111111111111111111111111111111116uk5ne"}))
+               ("transaction_header", fc::mutable_variant_object()
+                  ("expiration", "1970-01-01T00:00:00")
+                  ("ref_block_num", 1)
+                  ("ref_block_prefix", 0)
+                  ("max_net_usage_words", 100)
+                  ("max_cpu_usage_ms", 50)
+                  ("delay_sec", 0)
+               )
          }))
       ;
 
       mock_get_block = [&block_trace]( uint32_t height, const yield_function& ) -> get_block_t {
          BOOST_TEST(height == 1);
-         return std::make_tuple(block_trace, false);
+         return std::make_tuple(data_log_entry(block_trace), false);
       };
 
       // simulate an inability to parse the parameters
@@ -248,13 +287,11 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
    BOOST_FIXTURE_TEST_CASE(basic_block_response_unsorted, response_test_fixture)
    {
       auto block_trace = block_trace_v1 {
-         {
-            "b000000000000000000000000000000000000000000000000000000000000001"_h,
-            1,
-            "0000000000000000000000000000000000000000000000000000000000000000"_h,
-            chain::block_timestamp_type(0),
-            "bp.one"_n
-         },
+         "b000000000000000000000000000000000000000000000000000000000000001"_h,
+         1,
+         "0000000000000000000000000000000000000000000000000000000000000000"_h,
+         chain::block_timestamp_type(0),
+         "bp.one"_n,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          0,
@@ -282,7 +319,12 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
                         { 0x02, 0x02, 0x02, 0x02 }
                      }
                   }
-               }
+               },
+               fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{chain::transaction_receipt_header::status_enum::executed},
+               10,
+               5,
+               { chain::signature_type() },
+               { chain::time_point(), 1, 0, 100, 50, 0 }
             }
          }
       };
@@ -294,11 +336,15 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
          ("status", "pending")
          ("timestamp", "2000-01-01T00:00:00.000Z")
          ("producer", "bp.one")
+         ("transaction_mroot", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("action_mroot", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("schedule_version", 0)
          ("transactions", fc::variants({
             fc::mutable_variant_object()
                ("id", "0000000000000000000000000000000000000000000000000000000000000001")
                ("actions", fc::variants({
                   fc::mutable_variant_object()
+                     ("global_sequence", 0)
                      ("receiver", "receiver")
                      ("account", "contract")
                      ("action", "action")
@@ -310,6 +356,7 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
                      ("data", "00000000")
                   ,
                   fc::mutable_variant_object()
+                     ("global_sequence", 1)
                      ("receiver", "receiver")
                      ("account", "contract")
                      ("action", "action")
@@ -321,6 +368,7 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
                      ("data", "01010101")
                   ,
                   fc::mutable_variant_object()
+                     ("global_sequence", 2)
                      ("receiver", "receiver")
                      ("account", "contract")
                      ("action", "action")
@@ -331,12 +379,24 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
                      }))
                      ("data", "02020202")
                }))
+               ("status", "executed")
+               ("cpu_usage_us", 10)
+               ("net_usage_words", 5)
+               ("signatures", fc::variants({"SIG_K1_111111111111111111111111111111111111111111111111111111111111111116uk5ne"}))
+               ("transaction_header", fc::mutable_variant_object()
+                  ("expiration", "1970-01-01T00:00:00")
+                  ("ref_block_num", 1)
+                  ("ref_block_prefix", 0)
+                  ("max_net_usage_words", 100)
+                  ("max_cpu_usage_ms", 50)
+                  ("delay_sec", 0)
+               )
          }))
       ;
 
       mock_get_block = [&block_trace]( uint32_t height, const yield_function& ) -> get_block_t {
          BOOST_TEST(height == 1);
-         return std::make_tuple(block_trace, false);
+         return std::make_tuple(data_log_entry(block_trace), false);
       };
 
       // simulate an inability to parse the parameters
@@ -352,13 +412,11 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
    BOOST_FIXTURE_TEST_CASE(lib_response, response_test_fixture)
    {
       auto block_trace = block_trace_v1{
-         {
-            "b000000000000000000000000000000000000000000000000000000000000001"_h,
-            1,
-            "0000000000000000000000000000000000000000000000000000000000000000"_h,
-            chain::block_timestamp_type(0),
-            "bp.one"_n
-         },
+         "b000000000000000000000000000000000000000000000000000000000000001"_h,
+         1,
+         "0000000000000000000000000000000000000000000000000000000000000000"_h,
+         chain::block_timestamp_type(0),
+         "bp.one"_n,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          0,
@@ -372,12 +430,15 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
          ("status", "irreversible")
          ("timestamp", "2000-01-01T00:00:00.000Z")
          ("producer", "bp.one")
+         ("transaction_mroot", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("action_mroot", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("schedule_version", 0)
          ("transactions", fc::variants() )
       ;
 
       mock_get_block = [&block_trace]( uint32_t height, const yield_function& ) -> get_block_t {
          BOOST_TEST(height == 1);
-         return std::make_tuple(block_trace, true);
+         return std::make_tuple(data_log_entry(block_trace), true);
       };
 
       fc::variant response = get_block_trace( 1 );
@@ -410,13 +471,11 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
    BOOST_FIXTURE_TEST_CASE(yield_throws, response_test_fixture)
    {
       auto block_trace = block_trace_v1 {
-         {
-            "b000000000000000000000000000000000000000000000000000000000000001"_h,
-            1,
-            "0000000000000000000000000000000000000000000000000000000000000000"_h,
-            chain::block_timestamp_type(0),
-            "bp.one"_n
-         },
+         "b000000000000000000000000000000000000000000000000000000000000001"_h,
+         1,
+         "0000000000000000000000000000000000000000000000000000000000000000"_h,
+         chain::block_timestamp_type(0),
+         "bp.one"_n,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          "0000000000000000000000000000000000000000000000000000000000000000"_h,
          0,
@@ -432,14 +491,19 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
                         { 0x00, 0x01, 0x02, 0x03 }
                      }
                   }
-               }
+               },
+               fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{chain::transaction_receipt_header::status_enum::executed},
+               10,
+               5,
+               std::vector<chain::signature_type>{chain::signature_type()},
+               {chain::time_point(), 1, 0, 100, 50, 0}
             }
          }
       };
 
       mock_get_block = [&block_trace]( uint32_t height, const yield_function& ) -> get_block_t {
          BOOST_TEST(height == 1);
-         return std::make_tuple(block_trace, false);
+         return std::make_tuple(data_log_entry(block_trace), false);
       };
 
       int countdown = 3;
@@ -465,6 +529,68 @@ BOOST_AUTO_TEST_SUITE(trace_responses)
 
 
       BOOST_REQUIRE_THROW(get_block_trace( 1, yield ), yield_exception);
+   }
+
+   BOOST_FIXTURE_TEST_CASE(old_version_block_response, response_test_fixture)
+   {
+      auto block_trace = block_trace_v0 {
+         "b000000000000000000000000000000000000000000000000000000000000001"_h,
+         1,
+         "0000000000000000000000000000000000000000000000000000000000000000"_h,
+         chain::block_timestamp_type(0),
+         "bp.one"_n,
+         {
+            {
+               "0000000000000000000000000000000000000000000000000000000000000001"_h,
+               {
+                  {
+                     0,
+                     "receiver"_n, "contract"_n, "action"_n,
+                     {{ "alice"_n, "active"_n }},
+                     { 0x00, 0x01, 0x02, 0x03 }
+                  }
+               }
+            }
+         }
+      };
+
+      fc::variant expected_response = fc::mutable_variant_object()
+         ("id", "b000000000000000000000000000000000000000000000000000000000000001")
+         ("number", 1)
+         ("previous_id", "0000000000000000000000000000000000000000000000000000000000000000")
+         ("status", "pending")
+         ("timestamp", "2000-01-01T00:00:00.000Z")
+         ("producer", "bp.one")
+         ("transactions", fc::variants({
+            fc::mutable_variant_object()
+               ("id", "0000000000000000000000000000000000000000000000000000000000000001")
+               ("actions", fc::variants({
+                  fc::mutable_variant_object()
+                     ("global_sequence", 0)
+                     ("receiver", "receiver")
+                     ("account", "contract")
+                     ("action", "action")
+                     ("authorization", fc::variants({
+                        fc::mutable_variant_object()
+                           ("account", "alice")
+                           ("permission", "active")
+                     }))
+                     ("data", "00010203")
+                     ("params", fc::mutable_variant_object()
+                        ("hex", "00010203")
+                     )
+               }))
+         }))
+      ;
+
+      mock_get_block = [&block_trace]( uint32_t height, const yield_function& ) -> get_block_t {
+         BOOST_TEST(height == 1);
+         return std::make_tuple(data_log_entry(block_trace), false);
+      };
+
+      fc::variant actual_response = get_block_trace( 1 );
+
+      BOOST_TEST(to_kv(expected_response) == to_kv(actual_response), boost::test_tools::per_element());
    }
 
 BOOST_AUTO_TEST_SUITE_END()
