@@ -352,12 +352,10 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
                {
                   ptrx2.id(),
                   {
-                     {
-                        1,
-                        "bob"_n, "eosio.token"_n, "transfer"_n,
-                        {{ "bob"_n, "active"_n }},
-                        make_transfer_data( "bob"_n, "alice"_n, "0.0001 SYS"_t, "Memo!" )
-                     }
+                     1,
+                     "bob"_n, "eosio.token"_n, "transfer"_n,
+                     {{ "bob"_n, "active"_n }},
+                     make_transfer_data( "bob"_n, "alice"_n, "0.0001 SYS"_t, "Memo!" )
                   }
                },
                fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{bsp1->block->transactions[1].status},
@@ -371,12 +369,10 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
                {
                   ptrx3.id(),
                   {
-                     {
-                        2,
-                        "fred"_n, "eosio.token"_n, "transfer"_n,
-                        {{ "fred"_n, "active"_n }},
-                        make_transfer_data( "fred"_n, "bob"_n, "0.0001 SYS"_t, "Memo!" )
-                     }
+                     2,
+                     "fred"_n, "eosio.token"_n, "transfer"_n,
+                     {{ "fred"_n, "active"_n }},
+                     make_transfer_data( "fred"_n, "bob"_n, "0.0001 SYS"_t, "Memo!" )
                   }
                },
                fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{bsp1->block->transactions[2].status},
