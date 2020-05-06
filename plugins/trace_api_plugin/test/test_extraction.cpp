@@ -444,7 +444,7 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
                fc::enum_type<uint8_t, chain::transaction_receipt_header::status_enum>{bsp1->block->transactions[0].status},
                bsp1->block->transactions[0].cpu_usage_us,
                bsp1->block->transactions[0].net_usage_words,
-               *transfer_trx.get_signatures(),
+               transfer_trx.get_signatures(),
                make_trx_header(transfer_trx.get_transaction())
             }
          }
