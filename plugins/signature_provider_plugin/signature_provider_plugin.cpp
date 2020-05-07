@@ -54,7 +54,11 @@ class signature_provider_plugin_impl {
          return [to=_keosd_provider_timeout_us, keosd_url, pubkey](const chain::digest_type& digest) {
             fc::variant params;
             fc::to_variant(std::make_pair(digest, pubkey), params);
+<<<<<<< HEAD
             auto deadline = to.count() >= 0 ? fc::now() + to : fc::time_point::max();
+=======
+            auto deadline = to.count() >= 0 ? fc::time_point::now() + to : fc::time_point::maximum();
+>>>>>>> fb789f1c1... separate out signature provider from producer plugin
             return app().get_plugin<http_client_plugin>().get_client().post_sync(keosd_url, params, deadline).as<chain::signature_type>();
          };
       }
@@ -65,7 +69,13 @@ signature_provider_plugin::~signature_provider_plugin(){}
 
 void signature_provider_plugin::set_program_options(options_description&, options_description& cfg) {
    cfg.add_options()
+<<<<<<< HEAD
          ("keosd-provider-timeout", boost::program_options::value<int32_t>()->default_value(5),
+=======
+         ("keosd-provider-timeout", boost::program_options::value<int32_t>()->default_value(5)->notifier([this](auto to){
+            my->_keosd_provider_timeout_us = fc::milliseconds(to);
+         }),
+>>>>>>> fb789f1c1... separate out signature provider from producer plugin
           "Limits the maximum time (in milliseconds) that is allowed for sending requests to a keosd provider for signing")
          ;
 }
@@ -85,10 +95,13 @@ const char* const signature_provider_plugin::signature_provider_help_text() cons
 
 }
 
+<<<<<<< HEAD
 void signature_provider_plugin::plugin_initialize(const variables_map& options) {
    my->_keosd_provider_timeout_us = fc::milliseconds( options.at("keosd-provider-timeout").as<int32_t>() );
 }
 
+=======
+>>>>>>> fb789f1c1... separate out signature provider from producer plugin
 std::pair<chain::public_key_type,signature_provider_plugin::signature_provider_type>
 signature_provider_plugin::signature_provider_for_specification(const std::string& spec) const {
    auto delim = spec.find("=");
