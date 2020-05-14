@@ -2254,7 +2254,7 @@ namespace eosio {
       if( consecutive_immediate_connection_close > def_max_consecutive_immediate_connection_close || no_retry == benign_other ) {
          auto connector_period_us = fc::duration_cast<fc::microseconds>( my_impl->connector_period );
          std::lock_guard<std::mutex> g( c->conn_mtx );
-         if( last_close == fc::time_point() || last_close > fc::now() - connector_period_us ) ) {
+         if( last_close == fc::time_point() || last_close > fc::now() - connector_period_us ) {
             return true; // true so doesn't remove from valid connections
          }
       }
