@@ -193,7 +193,7 @@ struct test_chain {
 
    test_chain(const char* snapshot) {
       eosio::chain::genesis_state genesis;
-      genesis.initial_timestamp = fc::time_point::from_iso_string("2020-01-01T00:00:00.000");
+      genesis.initial_timestamp = fc::from_iso_string<fc::time_point>("2020-01-01T00:00:00.000");
       cfg                       = std::make_unique<eosio::chain::controller::config>();
       cfg->blocks_dir           = dir.path() / "blocks";
       cfg->state_dir            = dir.path() / "state";
@@ -795,7 +795,7 @@ struct callbacks {
       auto ptrx = std::make_shared<eosio::chain::packed_transaction>(
             std::move(signed_trx), true, eosio::chain::packed_transaction::compression_type::none);
       auto fut = eosio::chain::transaction_metadata::start_recover_keys(
-            ptrx, chain.control->get_thread_pool(), chain.control->get_chain_id(), fc::microseconds::maximum());
+            ptrx, chain.control->get_thread_pool(), chain.control->get_chain_id(), fc::microseconds::max());
       auto start_time = std::chrono::steady_clock::now();
       auto result     = chain.control->push_transaction(fut.get(), fc::time_point::max(), 2000, true);
       auto us = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_time);

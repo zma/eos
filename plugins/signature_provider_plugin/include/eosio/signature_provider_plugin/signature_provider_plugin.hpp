@@ -15,11 +15,7 @@ public:
    APPBASE_PLUGIN_REQUIRES((http_client_plugin))
    virtual void set_program_options(options_description&, options_description& cfg) override;
 
-<<<<<<< HEAD
    void plugin_initialize(const variables_map& options);
-=======
-   void plugin_initialize(const variables_map& options) {}
->>>>>>> fb789f1c1... separate out signature provider from producer plugin
    void plugin_startup() {}
    void plugin_shutdown() {}
 
