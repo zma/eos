@@ -334,7 +334,7 @@ eosio::chain_apis::read_only::get_info_results get_info() {
 }
 
 string generate_nonce_string() {
-   return fc::to_string(fc::clock::now().time_since_epoch().count());
+   return fc::to_string(fc::now().time_since_epoch().count());
 }
 
 chain::action generate_nonce_action() {
@@ -2661,7 +2661,7 @@ int main( int argc, char** argv ) {
       try {
         abi_serializer::from_variant( trx_var, trx, abi_serializer_resolver_empty, abi_serializer::create_yield_function( abi_serializer_max_time ) );
       } EOS_RETHROW_EXCEPTIONS(transaction_type_exception, "Invalid transaction format: '${data}'",
-                               ("data", fc::json::to_string(trx_var, fc::time_point::maximum())))
+                               ("data", fc::json::to_string(trx_var, fc::time_point::max())))
 
       fc::optional<chain_id_type> chain_id;
 
@@ -2674,7 +2674,7 @@ int main( int argc, char** argv ) {
       }
 
       flat_set<public_key_type> recovered_pub_keys;
-      trx.get_signature_keys( *chain_id, fc::time_point::maximum(), recovered_pub_keys, false );
+      trx.get_signature_keys( *chain_id, fc::time_point::max(), recovered_pub_keys, false );
 
       std::cout << fc::json::to_pretty_string(recovered_pub_keys) << std::endl;
    });

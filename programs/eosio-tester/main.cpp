@@ -126,7 +126,7 @@ struct intrinsic_context {
       strx.actions.back().authorization.push_back({ eosio::chain::name{ "eosio" }, eosio::chain::name{ "active" } });
       trx = eosio::chain::packed_transaction( std::move(strx), true );
       trx_ctx = std::make_unique<eosio::chain::transaction_context>(control, trx, xxx_timer.get(),
-                                                                    fc::time_point::now());
+                                                                    fc::now());
       trx_ctx->init_for_implicit_trx(0);
       trx_ctx->exec();
       apply_context = std::make_unique<eosio::chain::apply_context>(control, *trx_ctx, 1, 0);
@@ -797,7 +797,7 @@ struct callbacks {
       auto fut = eosio::chain::transaction_metadata::start_recover_keys(
             ptrx, chain.control->get_thread_pool(), chain.control->get_chain_id(), fc::microseconds::maximum());
       auto start_time = std::chrono::steady_clock::now();
-      auto result     = chain.control->push_transaction(fut.get(), fc::time_point::maximum(), 2000, true);
+      auto result     = chain.control->push_transaction(fut.get(), fc::time_point::max(), 2000, true);
       auto us = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() - start_time);
       ilog("chainlib transaction took ${u} us", ("u", us.count()));
       // ilog("${r}", ("r", fc::json::to_pretty_string(result)));
@@ -812,7 +812,7 @@ struct callbacks {
             chain.control->db().get_index<eosio::chain::generated_transaction_multi_index, eosio::chain::by_delay>();
       auto itr = idx.begin();
       if (itr != idx.end() && itr->delay_until <= chain.control->pending_block_time()) {
-         auto trace = chain.control->push_scheduled_transaction(itr->trx_id, fc::time_point::maximum(),
+         auto trace = chain.control->push_scheduled_transaction(itr->trx_id, fc::time_point::max(),
                                                                 billed_cpu_time_use, true);
          set_data(cb_alloc_data, cb_alloc,
                   convert_to_bin(chain_types::transaction_trace{ convert(*trace) }));

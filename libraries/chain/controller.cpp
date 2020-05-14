@@ -483,7 +483,7 @@ struct controller_impl {
       auto blog_head_time = blog_head->timestamp.to_time_point();
       replay_head_time = blog_head_time;
       auto start_block_num = head->block_num + 1;
-      auto start = fc::clock::now();
+      auto start = fc::now();
 
       std::exception_ptr except_ptr;
 
