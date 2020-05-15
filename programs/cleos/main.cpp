@@ -1571,7 +1571,7 @@ struct bidname_info_subcommand {
          const auto& row = result.rows[0];
          string time = row["last_bid_time"].as_string();
          try {
-             time = (string)fc::time_point(fc::microseconds(to_uint64(time)));
+             time = fc::to_iso_string( fc::time_point(fc::microseconds(to_uint64(time))) );
          } catch (fc::parse_error_exception&) {
          }
          int64_t bid = row["high_bid"].as_int64();
