@@ -5,9 +5,13 @@
 #include <eosio/chain/contract_types.hpp>
 #include <eosio/chain/trace.hpp>
 #include <eosio/chain/transaction.hpp>
+#include <eosio/chain/block.hpp>
+#include <eosio/chain/block_state.hpp>
 
 #include <eosio/trace_api/test_common.hpp>
 #include <eosio/trace_api/chain_extraction.hpp>
+
+#include <fc/bitutil.hpp>
 
 using namespace eosio;
 using namespace eosio::trace_api;
@@ -46,6 +50,15 @@ namespace {
          fc::raw::pack(ds, one);
       }
       return result;
+   }
+
+   auto get_private_key( name keyname, std::string role = "owner" ) {
+      auto secret = fc::sha256::hash( keyname.to_string() + role );
+      return chain::private_key_type::regenerate<fc::ecc::private_key_shim>( secret );
+   }
+
+   auto get_public_key( name keyname, std::string role = "owner" ) {
+      return get_private_key( keyname, role ).get_public_key();
    }
 
    auto make_transfer_action( chain::name from, chain::name to, chain::asset quantity, std::string memo ) {
@@ -220,7 +233,7 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
       auto bsp1 = make_block_state( chain::block_id_type(), 1, 1, "bp.one"_n,
             { chain::packed_transaction(ptrx1) } );
       signal_accepted_block( bsp1 );
-
+      
       const uint32_t expected_lib = 0;
       const block_trace_v1 expected_trace{
          {
@@ -444,3 +457,4 @@ BOOST_AUTO_TEST_SUITE(block_extraction)
    }
 
 BOOST_AUTO_TEST_SUITE_END()
+
