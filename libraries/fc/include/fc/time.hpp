@@ -23,8 +23,8 @@ namespace fc {
 
   using     chrono::microseconds;
   using     chrono::milliseconds;
-  //using     chrono::seconds;
-  typedef chrono::duration<int32_t, std::ratio<1, 1>> seconds;
+  using     chrono::seconds;
+  //typedef chrono::duration<int32_t, std::ratio<1, 1>> tp_seconds;
   using chrono::hours;
   using chrono::minutes;
   typedef   chrono::duration<int16_t, std::ratio<60 * 60 * 24>>      days;
